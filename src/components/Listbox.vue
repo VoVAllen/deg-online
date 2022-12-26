@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import {
   Listbox,
   ListboxButton,
@@ -14,7 +14,7 @@ interface Provider {
   code: string
 }
 
-withDefaults(defineProps<{ provider: string }>(), { provider: 'wechat' })
+// withDefaults(defineProps<{ provider: string }>(), { provider: 'wechat' })
 const emits = defineEmits(['update:provider'])
 
 const providers: Provider[] = [
@@ -24,8 +24,8 @@ const providers: Provider[] = [
 ]
 const selectedProvider = ref(providers[0])
 
-watch(selectedProvider, (val) => {
-  emits('update:provider', val.code)
+watchEffect(() => {
+  emits('update:provider', selectedProvider.value.code)
 })
 </script>
 
@@ -50,8 +50,8 @@ watch(selectedProvider, (val) => {
             class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base border-neutral-300 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             <ListboxOption
-              v-for="person in providers" v-slot="{ active, selected }" :key="person.name"
-              :value="person" as="template"
+              v-for="person in providers" v-slot="{ active, selected }" :key="person.name" :value="person"
+              as="template"
             >
               <li
                 class="relative cursor-default select-none py-2 pl-10 pr-4" :class="[
@@ -63,10 +63,7 @@ watch(selectedProvider, (val) => {
                     selected ? 'font-medium' : 'font-normal',
                   ]"
                 >{{ person.name }}</span>
-                <span
-                  v-if="selected"
-                  class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600"
-                >
+                <span v-if="selected" class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
                   <CheckIcon class="h-5 w-5" aria-hidden="true" />
                 </span>
               </li>
